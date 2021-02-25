@@ -8,6 +8,7 @@ class Car:
         self.path_index = 0
         self.path_completed = False
         self.moved = [False for i in range(simulation_time)]
+        self.finish_time = simulation_time
 
     def at_node(self):
         return self.to_node == 0
@@ -18,6 +19,7 @@ class Car:
     def move_to_next_street(self, current_time):
         if self.path_index == self.streets_no - 1:
             self.path_completed = True
+            self.finish_time = current_time
         if not self.path_completed and not self.moved[current_time]:
             self.path_index += 1
             self.current_street = self.path[self.path_index]
@@ -27,3 +29,4 @@ class Car:
     def move(self, current_time):
         self.to_node -= 1
         self.moved[current_time] = True
+
