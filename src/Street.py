@@ -36,10 +36,12 @@ class Light:
     def set_cycle(self, one_cycle_time, green_start, weight):
         self.one_cycle_time = one_cycle_time
         self.green_times = [green_start <= i < green_start + weight for i in range(one_cycle_time)]
+        if len(self.green_times) == 0:
+            self.green_times = [False]
 
     def release_car(self, current_time):
         car = None
-        if self.is_green(current_time) and len(self.queue)>0:
+        if self.is_green(current_time) and len(self.queue) > 0:
             car = self.queue[0]
             if not car.moved[current_time]:
                 car.move_to_next_street(current_time)

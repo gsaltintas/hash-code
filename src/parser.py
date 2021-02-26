@@ -1,18 +1,17 @@
-from src.DataStructures import City
+from src.City import City
 from src.Car import Car
 from src.Street import Street
 import os
 
 
 def main():
-    [ ]
-    for txt in ["a", "b", "c","d", "e", "f"]:
+    for txt in ["a", "b", "c", "d", "e", "f"]:
         D, F, city = parse_data(os.path.abspath(os.path.join("..", "files", "%s.txt" % txt)))
         city.setup_cycles()
         city.simulate()
-        print(city.score())
-        write_data(os.path.abspath(os.path.join("..", "output_files", "%s.txt" % txt)), city.report())
-        print("saved for %s" %txt)
+        # print(city.score())
+        city.report(os.path.abspath(os.path.join("..", "output_files", "%s.txt" % txt)))
+        print("saved for %s" % txt)
 
 
 def write_data(path, data):

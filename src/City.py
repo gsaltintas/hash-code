@@ -34,20 +34,27 @@ class City:
             if len(node.incoming_streets) == 1:
                 node.incoming_streets[0].light.state = 1
 
-    def report(self):
+    def report(self, path):
         # todo
-        txt = "%d\n" %self.node_no
-        for i in range(self.node_no):
-            node = self.nodes[i]
-            node_traffic = sum(self.street_traffic[street] for street in node.incoming_streets)
-            if node_traffic == 0:
-                continue
-            txt += "%d\n" % node.no
-            txt += "%d\n" % len(node.incoming_streets)
-            for street in node.cycle_weights:
-                if node.cycle_weights[street] > 0:
-                    txt += "%s %d\n" % (street.name, node.cycle_weights[street])
-        return txt
+        with open(path, "w") as file:
+            # file.write("%d\n" % self.node_no)
+            total = 0
+            for i in range(self.node_no):
+                node = self.nodes[i]
+                total += 1 if sum(node.cycle_weights.values()) > 0 else 0
+            file.write("%d\n" % total)
+            for i in range(self.node_no):
+                node = self.nodes[i]
+                node_traffic = sum([self.street_traffic[street] for street in node.incoming_streets])
+                if node_traffic == 0:
+                    continue
+                file.write("%d\n" % node.no)
+                file.write(
+                    "%d\n" % (len([street for street in node.incoming_streets if node.cycle_weights[street] > 0])))
+                for street in node.cycle_weights:
+                    if node.cycle_weights[street] > 0:
+                        file.write("%s %d\n" % (street.name, node.cycle_weights[street]))
+        return path
 
     def get_car_traffic(self):
         """ counts total number of cars that will be passing through city's streets """
@@ -81,8 +88,8 @@ class City:
             for street in node.incoming_streets:
                 node_weights[street] = int(street_traffic[street] / node_traffic * one_cycle_time)
             normalizer = gcd(list(node_weights.values()))
-            if normalizer==0:
-                normalizer=1
+            if normalizer == 0:
+                normalizer = 1
             node.one_cycle_time = int(sum(node_weights.values()) / normalizer)
             node.cycle_weights = node_weights
             for street in node.incoming_streets:
